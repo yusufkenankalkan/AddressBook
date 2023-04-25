@@ -1,6 +1,7 @@
 using AddressBookDL;
 using AddressBookEL.IdentityModels;
 using AddressBookEL.Mapping;
+using AddressBookPL.DefaultData;
 using AutoMapper.Extensions.ExpressionMapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -59,4 +60,13 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+//Proje ilk çalýþacaðý zaman default olarak eklenmesini istediðiniz verileri ya da baþka iþlemleri yazdýðýnýz classý burada çaðýrmalýsýnýz
+
+//buraya geri dönülecek
+
+//app.Data(); // extension metot olarak çaðýrmak
+//DataDefault.Data(app); //Harici çaðýrmak
+
+
+
+app.Run(); // Uygulamayý çalýþtýrýr
