@@ -1,4 +1,5 @@
 ﻿using AddressBookBL.ImplementationsOfManagers;
+using AddressBookBL.InterfacesOfManagers;
 using AddressBookDL.InterfacesOfRepo;
 using AddressBookEL.Models;
 using AddressBookEL.ViewModels;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace AddressBookBL.ImplementationsOfManager
 {
-    public class CityManager : Manager<CityVM, City, int>
+    public class CityManager : Manager<CityVM, City, int>, ICityManager
     {
 
         public CityManager(ICityRepo repo, IMapper mapper) : base(repo, mapper, "")
