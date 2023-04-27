@@ -1,5 +1,6 @@
 ﻿using AddressBookBL.EmailSenderBusiness;
 using AddressBookBL.InterfacesOfManagers;
+using AddressBookDL.InterfacesOfRepo;
 using AddressBookEL.IdentityModels;
 using AddressBookEL.ViewModels;
 using AddressBookPL.Models;
@@ -37,8 +38,8 @@ namespace AddressBookPL.Controllers
         }
 
         [HttpGet]
+        // identity'yi kullandığımız için Authorize içine role eklenebilir
         [Authorize(Roles = "Customer,Guest")]
-
         public IActionResult AddAddress()
         {
             try
@@ -50,9 +51,9 @@ namespace AddressBookPL.Controllers
             {
                 ViewBag.Cities = new List<CityVM>();
                 return View();
-
             }
         }
+
 
     }
 }

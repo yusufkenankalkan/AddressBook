@@ -1,9 +1,11 @@
-using AddressBookBL.EmailSenderBusiness;
+ï»¿using AddressBookBL.EmailSenderBusiness;
 using AddressBookBL.ImplementationOfManagers;
 using AddressBookBL.ImplementationsOfManager;
+using AddressBookBL.ImplementationsOfManagers;
 using AddressBookBL.InterfacesOfManagers;
 using AddressBookDL;
 using AddressBookDL.ImplementationOfRepo;
+using AddressBookDL.ImplementationsOfRepo;
 using AddressBookDL.InterfacesOfRepo;
 using AddressBookEL.IdentityModels;
 using AddressBookEL.Mapping;
@@ -11,16 +13,17 @@ using AddressBookPL.DefaultData;
 using AutoMapper.Extensions.ExpressionMapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.Xml;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<MyContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Local"));
+
 });
+
+
 
 var lockoutOptions = new LockoutOptions()
 {
@@ -29,29 +32,38 @@ var lockoutOptions = new LockoutOptions()
     MaxFailedAccessAttempts = 2
 };
 
-
-
-//identity ayarý
+//identtiy ayarï¿½ 
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
+    // ayarlar eklenecek
     options.Password.RequiredLength = 4;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
-    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireNonAlphanumeric = false; // @ / () [] {} ? : ; karakterler
     options.Password.RequireDigit = false;
     options.User.RequireUniqueEmail = true;
-    options.User.AllowedUserNameCharacters = "qwertyuopasdfghjklizxcvbnm-_1234567890";
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz-_0123456789";
     options.Lockout = lockoutOptions;
+
 }).AddDefaultTokenProviders().AddEntityFrameworkStores<MyContext>();
 
-//auto mapper ayarlarý
+
+
+
+
+//auto mapper ayarlarï¿½
+
 builder.Services.AddAutoMapper(x =>
 {
     x.AddExpressionMapping();
     x.AddProfile(typeof(Maps));
 });
 
-//interfacelerin DI için yaþam döngüleri (AddScoped)
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+//interfacelerin DI iï¿½in yaï¿½am dngï¿½leri (AddScoped)
 
 builder.Services.AddScoped<ICityRepo, CityRepo>();
 builder.Services.AddScoped<ICityManager, CityManager>();
@@ -75,21 +87,27 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
-app.UseStaticFiles(); //wwwroot
+app.UseStaticFiles(); // wwwroot
 
 app.UseRouting();
 
 app.UseAuthentication(); //login logout
-
-
-app.UseAuthorization();
-
+app.UseAuthorization(); // yetki
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-//Proje ilk çalýþacaðý zaman default olarak eklenmesini istediðiniz verileri ya da baþka iþlermleri yazdýðýnýz classý burada çaðýrmalýsýnýz.
-//app.Data();
+
+
+// Proje ilk ï¿½alï¿½ï¿½acaï¿½ï¿½ zaman default olarak eklenmesini istediï¿½iniz verileri yada baï¿½ka iï¿½lemleri yazdï¿½ï¿½ï¿½nï¿½z classï¿½ burada ï¿½aï¿½ï¿½rmalï¿½sï¿½nï¿½z
+
+
+//buraya geri dï¿½neceï¿½iz
+
+//app.Data(); // extension metot olarka ï¿½aï¿½ï¿½rmak
+//DataDefault.Data(app);  // harici ï¿½aï¿½ï¿½rmak
+
+//Xihan Shen ablanï¿½n yï¿½nteminden yapalï¿½m bï¿½ylece Erdener'in static olmasï¿½n isteiï¿½ini yerine getirelim.
 
 using (var scope = app.Services.CreateScope())
 {
@@ -105,5 +123,4 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-
-app.Run(); //Uygulamayý burada çalýþtýrýr.
+app.Run(); // uygulamayï¿½ ï¿½alï¿½ï¿½tï¿½r
