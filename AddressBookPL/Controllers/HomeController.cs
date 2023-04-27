@@ -45,6 +45,13 @@ namespace AddressBookPL.Controllers
             try
             {
                 ViewBag.Cities = _cityManager.GetAll(x => !x.IsRemoved).Data;
+
+                var user = _userManager.FindByNameAsync(HttpContext.User.Identity?.Name).Result;
+                UserAddressVM model = new()
+                {
+                    UserId = user.Id
+                };
+
                 return View();
             }
             catch (Exception ex)
@@ -54,6 +61,82 @@ namespace AddressBookPL.Controllers
             }
         }
 
+        [HttpGet]
+        public JsonResult GetCityDistricts(int id)
+        {
+            try
+            {
+                var data = _districtManager.GetAll(x => x.CityID == id && !x.IsRemoved).Data;
 
+                if (data == null)
+                {
+                    return Json(new { issuccess = false, message = "İlçeler Bulunamadı!" });
+                }
+
+                return Json(new { issuccess = true, message = "İlçeler geldi", data });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { issuccess = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetDistrictsNeigh(int id)
+        {
+            try
+            {
+                var data = _neighbourhoodManager.GetAll(x => x.DistrictId == id && !x.IsRemoved).Data;
+
+                if (data == null)
+                {
+                    return Json(new { issuccess = false, message = "Mahalleler Bulunamadı!" });
+                }
+
+                return Json(new { issuccess = true, message = "Mahalleler geldi", data });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { issuccess = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Customer")]
+        public JsonResult SaveAddress([FromBody] UserAddressVM model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Json(new { issuccess = false, msg = "Verileri eksiksiz girdiğinize emin olunuz" });
+                }
+
+                // yeni gelen adres varsayılan mı? Evet ise veritabanındaki diğer varsayılanı KALDIR
+                if (model.IsDefaultAddress)
+                {
+                    var prevDefault = _userAddressManager.GetByConditions(x => x.IsDefaultAddress
+                    && !x.IsRemoved).Data;
+                    if (prevDefault != null)
+                    {
+                        prevDefault.IsDefaultAddress = false;
+                        _userAddressManager.Update(prevDefault);
+                    }
+                }
+
+                model.CreatedDate = DateTime.Now;
+                var result = _userAddressManager.Add(model);
+                if (result.IsSuccess)
+                {
+                    return Json(new { issuccess = true, msg = "Yeni Adres Eklendi!" });
+                }
+                return Json(new { issuccess = false, msg = "Ekleme BAŞARISIZ!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { issuccess = false, msg = ex.Message });
+
+            }
+        }
     }
 }

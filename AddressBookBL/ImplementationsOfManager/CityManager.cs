@@ -15,7 +15,7 @@ namespace AddressBookBL.ImplementationsOfManager
     public class CityManager : Manager<CityVM, City, int>, ICityManager
     {
 
-        public CityManager(ICityRepo repo, IMapper mapper) : base(repo, mapper, "")
+        public CityManager(ICityRepo repo, IMapper mapper) : base(repo, mapper, null)
         {
 
         }

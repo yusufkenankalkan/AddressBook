@@ -32,7 +32,7 @@ var lockoutOptions = new LockoutOptions()
     MaxFailedAccessAttempts = 2
 };
 
-//identtiy ayar� 
+//identtiy ayarı 
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
     // ayarlar eklenecek
@@ -51,7 +51,7 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
 
 
 
-//auto mapper ayarlar�
+//auto mapper ayarları
 
 builder.Services.AddAutoMapper(x =>
 {
@@ -63,8 +63,7 @@ builder.Services.AddAutoMapper(x =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//interfacelerin DI i�in ya�am dng�leri (AddScoped)
-
+//interfacelerin DI için yaşam dngüleri (AddScoped)
 builder.Services.AddScoped<ICityRepo, CityRepo>();
 builder.Services.AddScoped<ICityManager, CityManager>();
 
@@ -78,6 +77,7 @@ builder.Services.AddScoped<IUserAddressRepo, UserAddressRepo>();
 builder.Services.AddScoped<IUserAddressManager, UserAddressManager>();
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+
 
 
 var app = builder.Build();
@@ -99,15 +99,15 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
-// Proje ilk �al��aca�� zaman default olarak eklenmesini istedi�iniz verileri yada ba�ka i�lemleri yazd���n�z class� burada �a��rmal�s�n�z
+// Proje ilk çalışacağı zaman default olarak eklenmesini istediğiniz verileri yada başka işlemleri yazdığınız classı burada çağırmalısınız
 
 
-//buraya geri d�nece�iz
+//buraya geri döneceğiz
 
-//app.Data(); // extension metot olarka �a��rmak
-//DataDefault.Data(app);  // harici �a��rmak
+//app.Data(); // extension metot olarka çağırmak
+//DataDefault.Data(app);  // harici çağırmak
 
-//Xihan Shen ablan�n y�nteminden yapal�m b�ylece Erdener'in static olmas�n istei�ini yerine getirelim.
+//Xihan Shen ablanın yönteminden yapalım böylece Erdener'in static olmasın isteiğini yerine getirelim.
 
 using (var scope = app.Services.CreateScope())
 {
@@ -116,11 +116,19 @@ using (var scope = app.Services.CreateScope())
     var roleManager = (RoleManager<AppRole>?)scope.ServiceProvider.GetService(typeof(RoleManager<AppRole>));
     // do you things here
 
+    var cityManager = (ICityManager?)scope.ServiceProvider.GetService(typeof(ICityManager));
+    var districtManager = (IDistrictManager?)scope.ServiceProvider.GetService(typeof(IDistrictManager));
+    var neighbourhoodManager = (INeighbourhoodManager?)scope.ServiceProvider.GetService(typeof(INeighbourhoodManager));
+
     DataDefaultXihan d = new DataDefaultXihan();
 
-    d.CheckAndCreateRoles(roleManager);
+    //d.CheckAndCreateRoles(roleManager);
+    //d.CreateAllCities(cityManager);
+    //d.CreateAllDistricts(districtManager);
+    //d.CreateSomeNeighbourhood(neighbourhoodManager, cityManager, districtManager);
 
 }
 
 
-app.Run(); // uygulamay� �al��t�r
+app.Run(); // uygulamayı çalıştır
+
