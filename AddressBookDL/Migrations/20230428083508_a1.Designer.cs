@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AddressBookDL.Migrations
 {
     [DbContext(typeof(MyContext))]
-    [Migration("20230424110408_a1")]
+    [Migration("20230428083508_a1")]
     partial class a1
     {
         /// <inheritdoc />

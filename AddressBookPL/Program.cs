@@ -1,7 +1,6 @@
 ﻿using AddressBookBL.EmailSenderBusiness;
 using AddressBookBL.ImplementationOfManagers;
 using AddressBookBL.ImplementationsOfManager;
-using AddressBookBL.ImplementationsOfManagers;
 using AddressBookBL.InterfacesOfManagers;
 using AddressBookDL;
 using AddressBookDL.ImplementationOfRepo;

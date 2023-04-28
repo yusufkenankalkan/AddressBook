@@ -7,7 +7,9 @@ using AddressBookPL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Net;
 
 namespace AddressBookPL.Controllers
 {
@@ -49,10 +51,10 @@ namespace AddressBookPL.Controllers
                 var user = _userManager.FindByNameAsync(HttpContext.User.Identity?.Name).Result;
                 UserAddressVM model = new()
                 {
-                    UserId = user.Id
+                    UserId = user.Id    
                 };
 
-                return View();
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -138,5 +140,39 @@ namespace AddressBookPL.Controllers
 
             }
         }
+
+        [HttpGet]
+        public JsonResult GetNeighbourhoodPostalCode(int cityid, int districtid, int neighbourid)
+        {
+            try
+            {
+                var district = _districtManager.GetByConditions(x=>x.Id==districtid).Data;
+                var neighbourhood = _neighbourhoodManager.GetByConditions(x => x.Id == neighbourid).Data;
+
+                string url = "https://api.ubilisim.com/postakodu/il/" + cityid;
+
+                using (WebClient client = new WebClient())
+                {
+                    var response = client.DownloadString(url);
+                    var dataAll = JsonConvert.DeserializeObject<ApiVM>(response);
+
+                    var data = dataAll.postakodu.FirstOrDefault(x => x.ilce.ToLower() == district.Name.ToLower()
+                    && x.mahalle.ToLower() == neighbourhood.Name.ToLower());
+
+                    if (data != null)
+                    {
+                        return Json(new { issuccess = true, msg = "Posta kodu bulundu", data = data.pk });
+                    }
+
+                    return Json(new { issuccess = false, msg = "Posta kodu bulunamadı!" });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { issuccess = false, msg = ex.Message });
+            }
+        }
+
     }
 }
