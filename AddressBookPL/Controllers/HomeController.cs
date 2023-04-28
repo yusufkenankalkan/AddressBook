@@ -156,8 +156,8 @@ namespace AddressBookPL.Controllers
                     var response = client.DownloadString(url);
                     var dataAll = JsonConvert.DeserializeObject<ApiVM>(response);
 
-                    var data = dataAll.postakodu.FirstOrDefault(x => x.ilce.ToLower() == district.Name.ToLower()
-                    && x.mahalle.ToLower() == neighbourhood.Name.ToLower());
+                    var data = dataAll.postakodu.FirstOrDefault(x => x.ilce.ToLowerInvariant() == district.Name.ToLower()
+                    && x.mahalle.ToLower() == neighbourhood.Name.ToLowerInvariant());
 
                     if (data != null)
                     {
